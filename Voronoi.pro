@@ -13,8 +13,17 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    voronoi.cpp \
+    vparabola.cpp \
+    vmath.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    voronoi.h \
+    vedge.h \
+    vevent.h \
+    vpoint.h \
+    vparabola.h \
+    vmath.h
 
 FORMS    += mainwindow.ui
