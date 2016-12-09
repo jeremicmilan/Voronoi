@@ -4,8 +4,8 @@
 quat_t quat_rotate(quat_t q, float angle, float x, float y, float z)
 {
   quat_t rq;
-  float half_angle = angle * 0.5f;
-  float sin_half = (float)sin(half_angle);
+  float  half_angle = angle * 0.5f;
+  float  sin_half   = (float)sin(half_angle);
 
   rq.w = (float)cos(half_angle);
   rq.x = x * sin_half;
@@ -19,6 +19,7 @@ quat_t quat_rotate(quat_t q, float angle, float x, float y, float z)
 static INLINE vec3_t v3_cons(float x, float y, float z)
 {
   vec3_t res;
+
   res.x = x;
   res.y = y;
   res.z = z;
@@ -28,6 +29,7 @@ static INLINE vec3_t v3_cons(float x, float y, float z)
 static INLINE vec3_t quat_vec(quat_t q)
 {
   vec3_t v;
+
   v.x = q.x;
   v.y = q.y;
   v.z = q.z;
@@ -43,6 +45,7 @@ static INLINE float v3_dot(vec3_t v1, vec3_t v2)
 static INLINE quat_t quat_cons(float s, float x, float y, float z)
 {
   quat_t q;
+
   q.x = x;
   q.y = y;
   q.z = z;
@@ -65,18 +68,31 @@ static INLINE quat_t quat_mul(quat_t q1, quat_t q2)
 
 static INLINE void quat_to_mat(mat4_t res, quat_t q)
 {
-  m4_cons(res,  1.0f - 2.0f * q.y*q.y - 2.0f * q.z*q.z,  2.0f * q.x * q.y + 2.0f * q.w * q.z,    2.0f * q.z * q.x - 2.0f * q.w * q.y, 0,
-          2.0f * q.x * q.y - 2.0f * q.w * q.z,    1.0f - 2.0f * q.x*q.x - 2.0f * q.z*q.z,  2.0f * q.y * q.z + 2.0f * q.w * q.x, 0,
-          2.0f * q.z * q.x + 2.0f * q.w * q.y,    2.0f * q.y * q.z - 2.0f * q.w * q.x,    1.0f - 2.0f * q.x*q.x - 2.0f * q.y*q.y, 0,
-          0, 0, 0, 1);
+  m4_cons(res,
+          1.0f - 2.0f * q.y * q.y - 2.0f * q.z * q.z,
+          2.0f * q.x * q.y + 2.0f * q.w * q.z,
+          2.0f * q.z * q.x - 2.0f * q.w * q.y,
+          0,
+          2.0f * q.x * q.y - 2.0f * q.w * q.z,
+          1.0f - 2.0f * q.x * q.x - 2.0f * q.z * q.z,
+          2.0f * q.y * q.z + 2.0f * q.w * q.x,
+          0,
+          2.0f * q.z * q.x + 2.0f * q.w * q.y,
+          2.0f * q.y * q.z - 2.0f * q.w * q.x,
+          1.0f - 2.0f * q.x * q.x - 2.0f * q.y * q.y,
+          0,
+          0,
+          0,
+          0,
+          1);
 }
 
 /* matrix functions */
 static INLINE void m4_cons(mat4_t m,
-    float m11, float m12, float m13, float m14,
-    float m21, float m22, float m23, float m24,
-    float m31, float m32, float m33, float m34,
-    float m41, float m42, float m43, float m44)
+                           float m11, float m12, float m13, float m14,
+                           float m21, float m22, float m23, float m24,
+                           float m31, float m32, float m33, float m34,
+                           float m41, float m42, float m43, float m44)
 {
   m[0][0] = m11; m[1][0] = m12; m[2][0] = m13; m[3][0] = m14;
   m[0][1] = m21; m[1][1] = m22; m[2][1] = m23; m[3][1] = m24;
