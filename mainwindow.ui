@@ -19,7 +19,40 @@
      <widget class="QGraphicsView" name="graphicsView"/>
     </item>
     <item>
+     <widget class="QSlider" name="horizontalSlider">
+      <property name="maximum">
+       <number>100000</number>
+      </property>
+      <property name="singleStep">
+       <number>1</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="navBar">
+      <item>
+       <widget class="QSpinBox" name="sbNumOfPoints">
+        <property name="minimum">
+         <number>3</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>50</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnGenerate">
+        <property name="text">
+         <string>Generate</string>
+        </property>
+       </widget>
+      </item>
       <item>
        <widget class="QPushButton" name="btnStart">
         <property name="text">
