@@ -8,7 +8,5 @@ int main(int argc, char *argv[])
 
     mainWindow.show();
 
-    mainWindow.InitModel();
-
     return a.exec();
 }
