@@ -16,7 +16,8 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     voronoi.cpp \
     vparabola.cpp \
-    vmath.cpp
+    vmath.cpp \
+    model.cpp
 
 HEADERS  += mainwindow.h \
     voronoi.h \
@@ -24,6 +25,7 @@ HEADERS  += mainwindow.h \
     vevent.h \
     vpoint.h \
     vparabola.h \
-    vmath.h
+    vmath.h \
+    model.h
 
 FORMS    += mainwindow.ui
