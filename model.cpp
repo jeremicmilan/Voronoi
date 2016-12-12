@@ -24,6 +24,11 @@ QGraphicsScene *Model::Scene()
 
 void Model::Clear()
 {
+    for (VPoint *point : *vertices)
+    {
+        delete point;
+    }
+
     vertices->clear();
 }
 
