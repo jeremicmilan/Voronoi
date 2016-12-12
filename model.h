@@ -27,17 +27,25 @@ private:
 
     double numOfPoints;
 
+    double animationParameter;
+
     QGraphicsScene *scene;
 
     void DrawPoint(VPoint *point);
 
-    void DrawLine(VEdge *edge);
+    void DrawLine(const VEdge *edge);
 
 public:
 
     Model(int w, int h, int n);
 
+    double Width() const;
+
+    double Height() const;
+
     void SetNumOfPoints(int n);
+
+    void SetAnimationParameter(double value);
 
     QGraphicsScene *Scene();
 

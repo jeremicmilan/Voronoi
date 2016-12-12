@@ -3,7 +3,8 @@
 Model::Model(int w, int h, int n) :
     width(w),
     height(h),
-    numOfPoints(n)
+    numOfPoints(n),
+    animationParameter(0)
 {
     voronoi = new Voronoi();
     vertices = new Vertices();
@@ -12,9 +13,24 @@ Model::Model(int w, int h, int n) :
     srand((unsigned)time(NULL));
 }
 
+double Model::Width() const
+{
+    return width;
+}
+
+double Model::Height() const
+{
+    return height;
+}
+
 void Model::SetNumOfPoints(int n)
 {
     numOfPoints = n;
+}
+
+void Model::SetAnimationParameter(double value)
+{
+    animationParameter = value;
 }
 
 QGraphicsScene *Model::Scene()
@@ -53,7 +69,7 @@ void Model::DrawPoint(VPoint *point)
         POINT_SIZE);
 }
 
-void Model::DrawLine(VEdge *edge)
+void Model::DrawLine(const VEdge *edge)
 {
     scene->addLine(edge->start->x, edge->start->y, edge->end->x, edge->end->y);
 }
@@ -62,11 +78,13 @@ void Model::Display()
 {
     scene->clear();
 
+    // Draw points
     for (VPoint *point : *vertices)
     {
         DrawPoint(point);
     }
 
+    // Draw Edges
     for (VEdge *edge: *edges)
     {
         DrawLine(edge);
@@ -77,8 +95,13 @@ void Model::Display()
             if (edge->end->x < 0 || edge->end->x > width ||
                 edge->end->y < 0 || edge->end->y > height)
             {
-                std::cout << "Invalid line" << std::endl;
+                //std::cout << "Invalid line" << std::endl;
             }
         }
     }
+
+    // Draw sweeping line
+    scene->addLine(0, animationParameter, width, animationParameter);
+
+    std::cout << animationParameter << std::endl;
 }
