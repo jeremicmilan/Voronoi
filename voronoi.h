@@ -4,11 +4,14 @@
 #include <list>
 #include <queue>
 #include <set>
+#include <vector>
 
 #include "vpoint.h"
 #include "vedge.h"
 #include "vparabola.h"
 #include "vevent.h"
+#include "eventdata.h"
+
 #include <functional>
 
 namespace vor
@@ -43,9 +46,7 @@ public:
      *
      *  All the data structures are managed by this class
      */
-    Edges *GetEdges(Vertices *	v,
-        int						w,
-        int						h);
+    Edges *GetEdges(Vertices *v, int w, int h, EventsData &eventsData);
 
 private:
 

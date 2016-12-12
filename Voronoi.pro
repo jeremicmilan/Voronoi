@@ -27,6 +27,7 @@ HEADERS  += mainwindow.h \
     vpoint.h \
     vparabola.h \
     vmath.h \
-    model.h
+    model.h \
+    eventdata.h
 
 FORMS    += mainwindow.ui

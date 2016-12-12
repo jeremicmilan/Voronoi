@@ -10,7 +10,7 @@ Voronoi::Voronoi()
     edges = 0;
 }
 
-Edges *Voronoi::GetEdges(Vertices *v, int w, int h)
+Edges *Voronoi::GetEdges(Vertices *v, int w, int h, EventsData &eventsData)
 {
     places = v;
     width = w;
@@ -54,6 +54,8 @@ Edges *Voronoi::GetEdges(Vertices *v, int w, int h)
         {
             delete(e); deleted.erase(e); continue;
         }
+
+        eventsData.push_back(EventData(ly));
 
         if (e->pe)
         {

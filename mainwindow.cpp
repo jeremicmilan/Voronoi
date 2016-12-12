@@ -16,7 +16,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::InitModel()
 {
-    QRectF size = ui->graphicsView->size();
+    QSize size = ui->graphicsView->size();
 
     model = new Model(size.width(), size.height(), ui->sbNumOfPoints->value());
 
@@ -42,7 +42,9 @@ void MainWindow::on_hsAnimationParameter_sliderMoved(int position)
     // Animation parameter from 0 to 1
     double ap = (double)position / ui->hsAnimationParameter->maximum();
 
-    model->SetAnimationParameter(ap * model->Height());
+    double height = model->Height();
+
+    model->SetAnimationParameter(height - ap * height);
 
     model->Display();
 }

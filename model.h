@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <time.h>
 #include <QGraphicsScene>
+#include <vector>
 
 #include "voronoi.h"
 #include "vpoint.h"
@@ -26,14 +27,17 @@ private:
     double height;
 
     double numOfPoints;
-
     double animationParameter;
+
+    EventsData eventsData;
 
     QGraphicsScene *scene;
 
     void DrawPoint(VPoint *point);
 
     void DrawLine(const VEdge *edge);
+
+    EventData   &FindEventData();
 
 public:
 

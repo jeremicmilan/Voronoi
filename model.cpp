@@ -46,6 +46,8 @@ void Model::Clear()
     }
 
     vertices->clear();
+
+    eventsData.clear();
 }
 
 void Model::Init()
@@ -57,21 +59,51 @@ void Model::Init()
             height * (double)rand() / (double)RAND_MAX));
     }
 
-    edges = voronoi->GetEdges(vertices, (int)width, (int)height);
+    edges = voronoi->GetEdges(vertices, (int)width, (int)height, eventsData);
     std::cout << "Voronoi diagram done!" << std::endl;
+
+    for (EventData ed : eventsData)
+    {
+        std::cout << ed.ly << " ";
+    }
+
+    std::cout << std::endl;
 }
 
 void Model::DrawPoint(VPoint *point)
 {
-    scene->addRect(point->x - POINT_SIZE / 2,
-        point->y - POINT_SIZE / 2,
+    double x = point->x;
+    double y = height - point->y;
+
+    scene->addRect(x - POINT_SIZE / 2,
+        y - POINT_SIZE / 2,
         POINT_SIZE,
         POINT_SIZE);
 }
 
 void Model::DrawLine(const VEdge *edge)
 {
-    scene->addLine(edge->start->x, edge->start->y, edge->end->x, edge->end->y);
+    double startX = edge->start->x;
+    double startY = height - edge->start->y;
+    double endX = edge->end->x;
+    double endY = height - edge->end->y;
+
+    scene->addLine(startX, startY, endX, endY);
+}
+
+EventData &Model::FindEventData()
+{
+    // Add a check for last event
+    if (true)
+    {
+        return *std::lower_bound(eventsData.begin(), eventsData.end(),
+                   EventData(animationParameter),
+                   [](const EventData &ed1, const EventData &ed2)
+        {
+            return !(ed1 < ed2);
+        }
+                   );
+    }
 }
 
 void Model::Display()
@@ -101,7 +133,8 @@ void Model::Display()
     }
 
     // Draw sweeping line
-    scene->addLine(0, animationParameter, width, animationParameter);
+    scene->addLine(0, height - animationParameter,
+        width, height - animationParameter);
 
-    std::cout << animationParameter << std::endl;
+    std::cout << FindEventData().ly << std::endl;
 }
