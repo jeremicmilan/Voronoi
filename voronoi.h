@@ -5,10 +5,10 @@
 #include <queue>
 #include <set>
 
-#include "VPoint.h"
-#include "VEdge.h"
-#include "VParabola.h"
-#include "VEvent.h"
+#include "vpoint.h"
+#include "vedge.h"
+#include "vparabola.h"
+#include "vevent.h"
 #include <functional>
 
 namespace vor

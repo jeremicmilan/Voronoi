@@ -1,7 +1,7 @@
 #ifndef VEDGE_H
 #define VEDGE_H
 
-#include "Vpoint.h"
+#include "vpoint.h"
 #include <iostream>
 
 /*
