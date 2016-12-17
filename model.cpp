@@ -93,16 +93,24 @@ void Model::DrawLine(const VEdge *edge)
 
 EventData &Model::FindEventData()
 {
-    // Add a check for last event
     if (true)
     {
-        return *std::lower_bound(eventsData.begin(), eventsData.end(),
-                   EventData(animationParameter),
-                   [](const EventData &ed1, const EventData &ed2)
+        auto eventData = std::lower_bound(eventsData.begin(), eventsData.end(),
+                EventData(animationParameter),
+                [](const EventData &ed1, const EventData &ed2)
         {
             return !(ed1 < ed2);
         }
-                   );
+                );
+
+        if (eventData == eventsData.end())
+        {
+            return *(eventData - 1);
+        }
+        else
+        {
+            return *eventData;
+        }
     }
 }
 
