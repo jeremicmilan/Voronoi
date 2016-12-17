@@ -10,6 +10,7 @@
  */
 
 class VEvent;
+class Model;
 
 /*
  *   A class that stores information about an item in beachline sequence (see
@@ -40,19 +41,23 @@ public:
 
     /*
      *   Constructors of the class (empty for edge, with focus parameter for an
-     *      arch), as well as the copy constructor, the destructor.
+     *      arch).
      */
 
     VParabola();
     VParabola(VPoint *s);
-    VParabola(const VParabola *other);
 
     /*
-     *   Function for deep copying and deep deleting the entire tree.
+     *   Functions for deep copying and deep deleting the entire tree.
      */
     VParabola *DeepCopy() const;
 
     void DeepDelete();
+
+    /*
+     *   Functions for traversing the tree and displaying its elements.
+     */
+    void Display(Model *model) const;
 
     /*
      *   Access to the children (in tree).

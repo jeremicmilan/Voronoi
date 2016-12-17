@@ -33,19 +33,21 @@ private:
 
     QGraphicsScene *scene;
 
-    void DrawPoint(VPoint *point);
-
-    void DrawLine(const VEdge *edge);
-
     EventData   &FindEventData();
 
 public:
 
-    Model(int w, int h, int n);
+    Model(int w, int h);
 
     double Width() const;
 
     double Height() const;
+
+    double GetYFromAP(double ap);
+
+    double ModelToDisplayX(double x);
+
+    double ModelToDisplayY(double y);
 
     void SetNumOfPoints(int n);
 
@@ -58,6 +60,10 @@ public:
     void Init();
 
     void Display();
+
+    void DrawPoint(VPoint *point, bool isSpecial);
+
+    void DrawLine(const VEdge *edge);
 };
 
 #endif // MODEL_H

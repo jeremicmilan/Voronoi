@@ -6,6 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    model = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -16,25 +17,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::InitModel()
 {
-    QSize size = ui->graphicsView->size();
+    if (model == nullptr)
+    {
+        QSize size = ui->graphicsView->size();
+        model = new Model(size.width(), size.height());
+        ui->graphicsView->setScene(model->Scene());
+    }
 
-    model = new Model(size.width(), size.height(), ui->sbNumOfPoints->value());
+    model->SetNumOfPoints(ui->sbNumOfPoints->value());
 
     model->Init();
-
     model->Display();
 
-    ui->graphicsView->setScene(model->Scene());
+    //ui->hsAnimationParameter->setMaximum(10000000000);
 }
 
 void MainWindow::on_btnGenerate_clicked()
 {
-    model->Clear();
-
-    model->SetNumOfPoints(ui->sbNumOfPoints->value());
-    model->Init();
-
-    model->Display();
+    InitModel();
 }
 
 void MainWindow::on_hsAnimationParameter_sliderMoved(int position)
@@ -42,9 +42,7 @@ void MainWindow::on_hsAnimationParameter_sliderMoved(int position)
     // Animation parameter from 0 to 1
     double ap = (double)position / ui->hsAnimationParameter->maximum();
 
-    double height = model->Height();
-
-    model->SetAnimationParameter(height - ap * height);
+    model->SetAnimationParameter(model->GetYFromAP(ap));
 
     model->Display();
 }

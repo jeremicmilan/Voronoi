@@ -55,7 +55,7 @@ Edges *Voronoi::GetEdges(Vertices *v, int w, int h, EventsData &eventsData)
             delete(e); deleted.erase(e); continue;
         }
 
-        eventsData.push_back(EventData(ly));
+        eventsData.push_back(EventData(ly, root->DeepCopy()));
 
         if (e->pe)
         {

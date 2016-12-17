@@ -65,8 +65,8 @@ private:
     double ly;
 
     /*
-     *  deleted : set  of deleted (false) Events (since
-     *    we can not delete from PriorityQueue
+     *  deleted : set of deleted (false) Events (since
+     *    we can not delete from PriorityQueue)
      *  points : list of all new points that were
      *    created during the algorithm
      *  queue : priority queue with events to process

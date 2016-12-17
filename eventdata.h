@@ -1,17 +1,21 @@
 #ifndef EVENTDATA_H
 #define EVENTDATA_H
 
+#include <vparabola.h>
+
 /*
  * This struct represents one entry in the history of execution
  * and contains all the information pertaining to one valid event
  */
 struct EventData
 {
-    EventData(double y) :
-        ly(y)
+    EventData(const double y, VParabola *r = nullptr) :
+        ly(y),
+        root(r)
     {}
 
-    double ly;
+    double		ly;
+    VParabola * root; // We are owning this
 
     bool operator <(const EventData &other) const
     {

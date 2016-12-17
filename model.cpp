@@ -1,9 +1,9 @@
 #include "model.h"
 
-Model::Model(int w, int h, int n) :
+Model::Model(int w, int h) :
     width(w),
     height(h),
-    numOfPoints(n),
+    numOfPoints(50),
     animationParameter(0)
 {
     voronoi = new Voronoi();
@@ -21,6 +21,23 @@ double Model::Width() const
 double Model::Height() const
 {
     return height;
+}
+
+double Model::GetYFromAP(double ap)
+{
+    double maxHeight = ModelToDisplayY(eventsData.back().ly);
+
+    return ModelToDisplayY(ap * maxHeight);
+}
+
+double Model::ModelToDisplayX(double x)
+{
+    return x;
+}
+
+double Model::ModelToDisplayY(double y)
+{
+    return height - y;
 }
 
 void Model::SetNumOfPoints(int n)
@@ -52,6 +69,15 @@ void Model::Clear()
 
 void Model::Init()
 {
+    vertices->clear();
+
+    for (EventData ed : eventsData)
+    {
+        ed.root->DeepDelete();
+    }
+
+    eventsData.clear();
+
     for (int i = 0; i < numOfPoints; i++)
     {
         vertices->push_back(new VPoint(width * (double)rand() /
@@ -70,23 +96,33 @@ void Model::Init()
     std::cout << std::endl;
 }
 
-void Model::DrawPoint(VPoint *point)
+void Model::DrawPoint(VPoint *point, bool isSpecial)
 {
-    double x = point->x;
-    double y = height - point->y;
+    double x = ModelToDisplayX(point->x);
+    double y = ModelToDisplayY(point->y);
+
+    QBrush brush(Qt::black);
+
+    if (isSpecial)
+    {
+        brush.setColor(Qt::yellow);
+        brush.setStyle(Qt::BrushStyle::SolidPattern);
+    }
 
     scene->addRect(x - POINT_SIZE / 2,
         y - POINT_SIZE / 2,
         POINT_SIZE,
-        POINT_SIZE);
+        POINT_SIZE,
+        QPen(),
+        brush);
 }
 
 void Model::DrawLine(const VEdge *edge)
 {
-    double startX = edge->start->x;
-    double startY = height - edge->start->y;
-    double endX = edge->end->x;
-    double endY = height - edge->end->y;
+    double startX = ModelToDisplayX(edge->start->x);
+    double startY = ModelToDisplayY(edge->start->y);
+    double endX = ModelToDisplayX(edge->end->x);
+    double endY = ModelToDisplayY(edge->end->y);
 
     scene->addLine(startX, startY, endX, endY);
 }
@@ -121,7 +157,7 @@ void Model::Display()
     // Draw points
     for (VPoint *point : *vertices)
     {
-        DrawPoint(point);
+        DrawPoint(point, false /* isSpecial */);
     }
 
     // Draw Edges
@@ -140,9 +176,15 @@ void Model::Display()
         }
     }
 
+    const EventData &eventData = FindEventData();
+
+    eventData.root->Display(this);
+
+    double sweepingLineY = ModelToDisplayY(animationParameter);
+
     // Draw sweeping line
-    scene->addLine(0, height - animationParameter,
-        width, height - animationParameter);
+    scene->addLine(ModelToDisplayX(0), sweepingLineY, ModelToDisplayX(
+            width), sweepingLineY);
 
     std::cout << FindEventData().ly << std::endl;
 }

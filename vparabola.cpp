@@ -1,6 +1,8 @@
 #include "vparabola.h"
 #include "vpoint.h"
 
+#include "model.h"
+
 /*
  *   Constructors
  */
@@ -12,6 +14,8 @@ VParabola::VParabola()
     cEvent = 0;
     edge = 0;
     parent = 0;
+    _left = nullptr;
+    _right = nullptr;
 }
 
 VParabola::VParabola(VPoint *s)
@@ -21,15 +25,8 @@ VParabola::VParabola(VPoint *s)
     cEvent = 0;
     edge = 0;
     parent = 0;
-}
-
-VParabola::VParabola(const VParabola *other)
-{
-    site = other->site;
-    isLeaf = other->isLeaf;
-    cEvent = other->cEvent;
-    edge = other->edge;
-    parent = nullptr;
+    _left = nullptr;
+    _right = nullptr;
 }
 
 VParabola *VParabola::DeepCopy() const
@@ -39,19 +36,63 @@ VParabola *VParabola::DeepCopy() const
         return nullptr;
     }
 
-    VParabola *newParabola = new VParabola(this);
+    VParabola *newParabola = new VParabola();
+    newParabola->isLeaf = isLeaf;
 
-    newParabola->SetLeft(Left()->DeepCopy());
-    newParabola->SetRight(Right()->DeepCopy());
+    if (isLeaf)
+    {
+        newParabola->site = new VPoint(site->x, site->y);
+        return newParabola;
+    }
+
+    if (Left() != nullptr)
+    {
+        newParabola->SetLeft(Left()->DeepCopy());
+    }
+
+    if (Right() != nullptr)
+    {
+        newParabola->SetRight(Right()->DeepCopy());
+    }
 
     return newParabola;
 }
 
 void VParabola::DeepDelete()
 {
-    Left()->DeepDelete();
-    Right()->DeepDelete();
+    if (isLeaf)
+    {
+        return;
+    }
+
+    if (Left() != nullptr)
+    {
+        Left()->DeepDelete();
+    }
+
+    if (Right() != nullptr)
+    {
+        Right()->DeepDelete();
+    }
     delete this;
+}
+
+void VParabola::Display(Model *model) const
+{
+    if (this == nullptr)
+    {
+        return;
+    }
+
+    if (isLeaf)
+    {
+        model->DrawPoint(site, true /* isSpecial */);
+    }
+    else
+    {
+        Left()->Display(model);
+        Right()->Display(model);
+    }
 }
 
 /*
