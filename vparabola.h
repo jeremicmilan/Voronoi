@@ -40,11 +40,19 @@ public:
 
     /*
      *   Constructors of the class (empty for edge, with focus parameter for an
-     *      arch).
+     *      arch), as well as the copy constructor, the destructor.
      */
 
     VParabola();
     VParabola(VPoint *s);
+    VParabola(const VParabola *other);
+
+    /*
+     *   Function for deep copying and deep deleting the entire tree.
+     */
+    VParabola *DeepCopy() const;
+
+    void DeepDelete();
 
     /*
      *   Access to the children (in tree).
@@ -69,17 +77,27 @@ public:
         return _right;
     }
 
+    const VParabola *Left() const
+    {
+        return _left;
+    }
+
+    const VParabola *Right() const
+    {
+        return _right;
+    }
+
     /*
      *  Some useful tree operations
      *
-     *  GetLeft       : returns the closest left leave of the tree
-     *  GetRight      : returns the closest right leafe of the tree
-     *  GetLeftParent : returns the closest parent which is on the left
-     *  GetLeftParent : returns the closest parent which is on the right
-     *  GetLeftChild  : returns the closest leave which is on the left of
-     *                  current node
-     *  GetRightChild : returns the closest leave which is on the right of
-     *                  current node
+     *  GetLeft        : returns the closest left leave of the tree
+     *  GetRight       : returns the closest right leafe of the tree
+     *  GetLeftParent  : returns the closest parent which is on the left
+     *  GetRightParent : returns the closest parent which is on the right
+     *  GetLeftChild   : returns the closest leave which is on the left of
+     *                   current node
+     *  GetRightChild  : returns the closest leave which is on the right of
+     *                   current node
      */
 
     static VParabola *GetLeft(VParabola *p);

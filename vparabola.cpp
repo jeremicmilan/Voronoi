@@ -23,6 +23,37 @@ VParabola::VParabola(VPoint *s)
     parent = 0;
 }
 
+VParabola::VParabola(const VParabola *other)
+{
+    site = other->site;
+    isLeaf = other->isLeaf;
+    cEvent = other->cEvent;
+    edge = other->edge;
+    parent = nullptr;
+}
+
+VParabola *VParabola::DeepCopy() const
+{
+    if (this == nullptr)
+    {
+        return nullptr;
+    }
+
+    VParabola *newParabola = new VParabola(this);
+
+    newParabola->SetLeft(Left()->DeepCopy());
+    newParabola->SetRight(Right()->DeepCopy());
+
+    return newParabola;
+}
+
+void VParabola::DeepDelete()
+{
+    Left()->DeepDelete();
+    Right()->DeepDelete();
+    delete this;
+}
+
 /*
  *   Tree operations (described in the header file)
  */
