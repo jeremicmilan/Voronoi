@@ -11,6 +11,7 @@
 
 class VEvent;
 class Model;
+class QGraphicsScene;
 
 /*
  *   A class that stores information about an item in beachline sequence (see
@@ -58,6 +59,8 @@ public:
      *   Functions for traversing the tree and displaying its elements.
      */
     void Display(Model *model) const;
+
+    void Draw(Model *model, const VPoint *focus, double directrixHeight) const;
 
     /*
      *   Access to the children (in tree).

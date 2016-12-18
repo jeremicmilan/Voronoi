@@ -3,13 +3,16 @@
 
 #include "model.h"
 
-/*
- *   Constructors
- */
+double ParabolaGetYFromX(const VPoint *focus, double directrixHeight, double x)
+{
+    return (pow((x - focus->x), 2) + pow(focus->y, 2) - pow(directrixHeight, 2))
+           / (2 * (focus->y - directrixHeight));
+}
 
 VParabola::VParabola()
 {
     site = 0;
+
     isLeaf = false;
     cEvent = 0;
     edge = 0;
@@ -60,20 +63,13 @@ VParabola *VParabola::DeepCopy() const
 
 void VParabola::DeepDelete()
 {
-    if (isLeaf)
+    if (this == nullptr || isLeaf)
     {
         return;
     }
 
-    if (Left() != nullptr)
-    {
-        Left()->DeepDelete();
-    }
-
-    if (Right() != nullptr)
-    {
-        Right()->DeepDelete();
-    }
+    Left()->DeepDelete();
+    Right()->DeepDelete();
     delete this;
 }
 
@@ -87,11 +83,34 @@ void VParabola::Display(Model *model) const
     if (isLeaf)
     {
         model->DrawPoint(site, true /* isSpecial */);
+        Draw(model, site, model->AnimationParameter());
     }
     else
     {
         Left()->Display(model);
         Right()->Display(model);
+    }
+}
+
+void VParabola::Draw(Model *model, const VPoint *focus,
+    double directrixHeight) const
+{
+    double previousY = ParabolaGetYFromX(focus, directrixHeight, 0);
+    double previousX = 0;
+
+    for (double x = PARABOLA_DRAW_STEP; x < model->Width();
+        x += qMax(PARABOLA_DRAW_STEP, qAbs(focus->x - x) / PARABOLA_PRECISION))
+    {
+        double currentY = ParabolaGetYFromX(focus, directrixHeight, x);
+
+        if (currentY <= model->Height() && currentY >= 0
+            || previousY <= model->Height() && previousY >= 0)
+        {
+            model->DrawLine(previousX, previousY, x, currentY);
+        }
+
+        previousY = currentY;
+        previousX = x;
     }
 }
 

@@ -25,7 +25,8 @@ double Model::Height() const
 
 double Model::GetYFromAP(double ap)
 {
-    double maxHeight = ModelToDisplayY(eventsData.back().ly);
+    double maxHeight = qMax(ModelToDisplayY(eventsData.back().ly),
+            ModelToDisplayY(-height));
 
     return ModelToDisplayY(ap * maxHeight);
 }
@@ -48,6 +49,11 @@ void Model::SetNumOfPoints(int n)
 void Model::SetAnimationParameter(double value)
 {
     animationParameter = value;
+}
+
+double Model::AnimationParameter() const
+{
+    return animationParameter;
 }
 
 QGraphicsScene *Model::Scene()
@@ -123,6 +129,16 @@ void Model::DrawLine(const VEdge *edge)
     double startY = ModelToDisplayY(edge->start->y);
     double endX = ModelToDisplayX(edge->end->x);
     double endY = ModelToDisplayY(edge->end->y);
+
+    scene->addLine(startX, startY, endX, endY);
+}
+
+void Model::DrawLine(double startX, double startY, double endX, double endY)
+{
+    startX = ModelToDisplayX(startX);
+    startY = ModelToDisplayY(startY);
+    endX = ModelToDisplayX(endX);
+    endY = ModelToDisplayY(endY);
 
     scene->addLine(startX, startY, endX, endY);
 }

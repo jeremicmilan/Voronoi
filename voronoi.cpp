@@ -55,7 +55,12 @@ Edges *Voronoi::GetEdges(Vertices *v, int w, int h, EventsData &eventsData)
             delete(e); deleted.erase(e); continue;
         }
 
-        eventsData.push_back(EventData(ly, root->DeepCopy()));
+        if (e->pe ||
+            (!e->pe && e->circleCenter->y >= 0 && e->circleCenter->x <= width &&
+            e->circleCenter->x >= 0))
+        {
+            eventsData.push_back(EventData(ly, root->DeepCopy()));
+        }
 
         if (e->pe)
         {
@@ -365,6 +370,7 @@ void Voronoi::CheckCircle(VParabola *b)
     points.push_back(e->point);
     b->cEvent = e;
     e->arch = b;
+    e->circleCenter = new VPoint(s->x, s->y);
     queue.push(e);
 }
 

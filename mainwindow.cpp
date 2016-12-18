@@ -28,8 +28,6 @@ void MainWindow::InitModel()
 
     model->Init();
     model->Display();
-
-    //ui->hsAnimationParameter->setMaximum(10000000000);
 }
 
 void MainWindow::on_btnGenerate_clicked()

@@ -8,11 +8,12 @@
 /*
  *   The class for storing place / circle event in event queue.
  *
- *   point : the point at which current event occurs (top circle point for circle
- *      event, focus point for place event)
- *   pe    : whether it is a place event or not
- *   y     : y coordinate of "point", events are sorted by this "y"
- *   arch  : if "pe", it is an arch above which the event occurs
+ *   point        : the point at which current event occurs (top circle point
+ *                  for circle event, focus point for place event)
+ *   pe           : whether it is a place event or not
+ *   y            : y coordinate of "point", events are sorted by this "y"
+ *   arch         : if "pe", it is an arch above which the event occurs
+ *   circleCenter : if not "pe", this represents the intersection in the diagram
  */
 
 class VEvent
@@ -23,6 +24,7 @@ public:
     bool pe;
     double y;
     VParabola *arch;
+    VPoint *circleCenter;
 
     /*
      *   Constructor for the class
@@ -36,7 +38,13 @@ public:
         point = p;
         pe = pev;
         y = p->y;
-        arch = 0;
+        arch = nullptr;
+        circleCenter = nullptr;
+    }
+
+    ~VEvent()
+    {
+        delete circleCenter;
     }
 
     /*
