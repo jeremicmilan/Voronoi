@@ -3,12 +3,13 @@
 Model::Model(int w, int h) :
     width(w),
     height(h),
-    numOfPoints(50),
-    animationParameter(0)
+    numOfPoints(50)
 {
     voronoi = new Voronoi();
     vertices = new Vertices();
     scene = new QGraphicsScene(0, 0, w, h);
+
+    animationParameter = ModelToDisplayY(0);
 
     srand((unsigned)time(NULL));
 }
