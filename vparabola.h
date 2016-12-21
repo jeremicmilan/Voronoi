@@ -51,6 +51,7 @@ public:
     /*
      *   Functions for deep copying and deep deleting the entire tree.
      */
+
     VParabola *DeepCopy() const;
 
     void DeepDelete();
@@ -58,9 +59,16 @@ public:
     /*
      *   Functions for traversing the tree and displaying its elements.
      */
-    void Display(Model *model) const;
+
+    void Display(Model *model);
 
     void Draw(Model *model, const VPoint *focus, double directrixHeight) const;
+
+    void DrawFromTo(Model * model,
+        const VPoint *		focus,
+        double				directrixHeight,
+        double				xFrom,
+        double				xTo) const;
 
     /*
      *   Access to the children (in tree).
@@ -119,6 +127,13 @@ public:
     static VParabola *GetLeftChild(VParabola *p);
 
     static VParabola *GetRightChild(VParabola *p);
+
+    /*
+     *  Function for intersecting two parabolae
+     */
+    static VPoint Intersect(const VParabola *	p1,
+        const VParabola *						p2,
+        double									sweepingLine);
 
 private:
 

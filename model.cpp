@@ -126,22 +126,22 @@ void Model::DrawPoint(VPoint *point, bool isSpecial)
 
 void Model::DrawLine(const VEdge *edge)
 {
-    double startX = ModelToDisplayX(edge->start->x);
-    double startY = ModelToDisplayY(edge->start->y);
-    double endX = ModelToDisplayX(edge->end->x);
-    double endY = ModelToDisplayY(edge->end->y);
-
-    scene->addLine(startX, startY, endX, endY);
+    DrawLine(edge->start->x, edge->start->y, edge->end->x, edge->end->y);
 }
 
-void Model::DrawLine(double startX, double startY, double endX, double endY)
+void Model::DrawLine(double startX,
+    double					startY,
+    double					endX,
+    double					endY,
+    bool					isBeachLine)
 {
     startX = ModelToDisplayX(startX);
     startY = ModelToDisplayY(startY);
     endX = ModelToDisplayX(endX);
     endY = ModelToDisplayY(endY);
 
-    scene->addLine(startX, startY, endX, endY);
+    scene->addLine(startX, startY, endX, endY,
+        QPen(isBeachLine ? Qt::red : Qt::black));
 }
 
 EventData &Model::FindEventData()

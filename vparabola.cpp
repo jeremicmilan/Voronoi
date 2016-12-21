@@ -73,7 +73,7 @@ void VParabola::DeepDelete()
     delete this;
 }
 
-void VParabola::Display(Model *model) const
+void VParabola::Display(Model *model)
 {
     if (this == nullptr)
     {
@@ -82,8 +82,28 @@ void VParabola::Display(Model *model) const
 
     if (isLeaf)
     {
+        const VParabola *left = GetLeft(this);
+        const VParabola *right = GetRight(this);
+        double sweepingLine = model->AnimationParameter();
+
+        //Draw(model, site, sweepingLine);
+
+        double xFrom = 0;
+        double xTo = model->Width();
+
+        if (left != nullptr)
+        {
+            xFrom = Intersect(left, this, sweepingLine).x;
+        }
+
+        if (right != nullptr)
+        {
+            xTo = Intersect(this, right, sweepingLine).x;
+        }
+
+        DrawFromTo(model, site, sweepingLine, xFrom, xTo);
+
         model->DrawPoint(site, true /* isSpecial */);
-        Draw(model, site, model->AnimationParameter());
     }
     else
     {
@@ -114,6 +134,34 @@ void VParabola::Draw(Model *model, const VPoint *focus,
     }
 }
 
+void VParabola::DrawFromTo(Model *model, const VPoint *focus,
+    double directrixHeight, double xFrom, double xTo) const
+{
+    xFrom = qMax(xFrom, 0.0);
+    xTo = qMin(xTo, model->Width());
+
+    double previousY = ParabolaGetYFromX(focus, directrixHeight, xFrom);
+    double previousX = xFrom;
+
+    for (double x = xFrom + PARABOLA_DRAW_STEP; x < xTo;
+        x += qMax(PARABOLA_DRAW_STEP, qAbs(focus->x - x) / PARABOLA_PRECISION))
+    {
+        double currentY = ParabolaGetYFromX(focus, directrixHeight, x);
+
+        if (currentY <= model->Height() && currentY >= 0
+            || previousY <= model->Height() && previousY >= 0)
+        {
+            model->DrawLine(previousX, previousY, x, currentY,
+                true /* isBeachLine */);
+        }
+
+        previousY = currentY;
+        previousX = x;
+    }
+
+    std::cout << "draw from " << xFrom << " to " << xTo << std::endl;
+}
+
 /*
  *   Tree operations (described in the header file)
  */
@@ -132,11 +180,16 @@ VParabola *VParabola::GetLeftParent(VParabola *p)
     VParabola *par = p->parent;
     VParabola *pLast = p;
 
+    if (par == nullptr)
+    {
+        return nullptr;
+    }
+
     while (par->Left() == pLast)
     {
         if (!par->parent)
         {
-            return 0;
+            return nullptr;
         }
 
         pLast = par;
@@ -150,6 +203,11 @@ VParabola *VParabola::GetRightParent(VParabola *p)
 {
     VParabola *par = p->parent;
     VParabola *pLast = p;
+
+    if (par == nullptr)
+    {
+        return nullptr;
+    }
 
     while (par->Right() == pLast)
     {
@@ -196,4 +254,46 @@ VParabola *VParabola::GetRightChild(VParabola *p)
     }
 
     return par;
+}
+
+VPoint VParabola::Intersect(const VParabola *	p1,
+    const VParabola *							p2,
+    double										sweepingLine)
+{
+    double a1 = p1->site->x;
+    double b1 = p1->site->y;
+
+    double a2 = p2->site->x;
+    double b2 = p2->site->y;
+
+    double c1 = sweepingLine;
+    double c2 = sweepingLine;
+
+    double D = b1 * b1 - c1 * c1;
+    double E = 2 * (b1 - c1);
+    double F = b2 * b2 - c2 * c2;
+    double G = 2 * (b2 - c2);
+
+    double A = G - E;
+    double B = -2 * a1 * G + 2 * a2 * E;
+    double C = G * a1 * a1 + D * G - E * a2 * a2 - E * F;
+
+    double discriminant = B * B - 4 * A * C;
+
+    if (qAbs(discriminant) < 0.000000000001)
+    {
+        double x = -B / (2 * A);
+        double y = ParabolaGetYFromX(p1->site, sweepingLine, x);
+        return VPoint(x, y);
+    }
+
+    if (discriminant > 0)
+    {
+        // TODO: Handle two solutions
+        double x = (-B - sqrt(discriminant)) / (2 * A);
+        double y = ParabolaGetYFromX(p1->site, sweepingLine, x);
+        return VPoint(x, y);
+    }
+
+    return VPoint(-1, -1);
 }

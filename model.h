@@ -12,7 +12,7 @@
 #include "vpoint.h"
 
 #define POINT_SIZE			5.0
-#define PARABOLA_DRAW_STEP	5.0
+#define PARABOLA_DRAW_STEP	3.0
 #define PARABOLA_PRECISION	5.0
 
 using namespace vor;
@@ -69,7 +69,11 @@ public:
 
     void DrawLine(const VEdge *edge);
 
-    void DrawLine(double startX, double startY, double endX, double endY);
+    void DrawLine(double	startX,
+        double				startY,
+        double				endX,
+        double				endY,
+        bool				isBeachLine = false);
 };
 
 #endif // MODEL_H
