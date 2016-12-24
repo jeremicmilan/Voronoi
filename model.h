@@ -13,7 +13,7 @@
 
 #define POINT_SIZE			5.0
 #define PARABOLA_DRAW_STEP	3.0
-#define PARABOLA_PRECISION	5.0
+#define PARABOLA_PRECISION	3.5
 
 using namespace vor;
 
