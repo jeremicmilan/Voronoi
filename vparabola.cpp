@@ -166,8 +166,10 @@ void VParabola::DrawFromTo(Model *model, const VPoint *focus,
             true /* isBeachLine */);
     }
 
+#ifdef DEBUG
     std::cout << "focus: " << focus->x << " - draw from " << xFrom << " to " <<
         xTo << std::endl;
+#endif
 }
 
 /*

@@ -27,6 +27,8 @@ private slots:
 
     void on_hsAnimationParameter_sliderMoved(int position);
 
+    void on_btnStart_clicked();
+
 private:
 
     Ui::MainWindow *ui;

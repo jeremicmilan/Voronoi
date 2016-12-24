@@ -11,6 +11,9 @@ Model::Model(int w, int h) :
 
     animationParameter = ModelToDisplayY(0);
 
+    timer.setInterval(1.0 / ANIMATION_FPS);
+    connect(&timer, SIGNAL(timeout()), this, SLOT(animate()));
+
     srand((unsigned)time(NULL));
 }
 
@@ -62,6 +65,11 @@ QGraphicsScene *Model::Scene()
     return scene;
 }
 
+QTimer *Model::Timer()
+{
+    return &timer;
+}
+
 void Model::Clear()
 {
     for (VPoint *point : *vertices)
@@ -95,12 +103,13 @@ void Model::Init()
     edges = voronoi->GetEdges(vertices, (int)width, (int)height, eventsData);
     std::cout << "Voronoi diagram done!" << std::endl;
 
+#ifdef DEBUG
     for (EventData ed : eventsData)
     {
         std::cout << ed.ly << " ";
     }
-
     std::cout << std::endl;
+#endif
 }
 
 void Model::DrawPoint(VPoint *point, bool isSpecial)
@@ -203,5 +212,13 @@ void Model::Display()
     scene->addLine(ModelToDisplayX(0), sweepingLineY, ModelToDisplayX(
             width), sweepingLineY);
 
-    std::cout << FindEventData().ly << std::endl;
+#ifdef DEBUG
+    std::cout << "Sweeping line: " << FindEventData().ly << std::endl;
+#endif
+}
+
+void Model::animate()
+{
+    animationParameter -= ANIMATION_SPEED;
+    Display();
 }

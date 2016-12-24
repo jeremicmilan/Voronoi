@@ -6,10 +6,14 @@
 #include <algorithm>
 #include <time.h>
 #include <QGraphicsScene>
+#include <QTimer>
 #include <vector>
 
 #include "voronoi.h"
 #include "vpoint.h"
+
+#define ANIMATION_SPEED		2.0
+#define ANIMATION_FPS		60
 
 #define POINT_SIZE			5.0
 #define PARABOLA_DRAW_STEP	3.0
@@ -17,13 +21,16 @@
 
 using namespace vor;
 
-class Model
+class Model : QObject
 {
+    Q_OBJECT
+
 private:
 
     Voronoi *voronoi;
     Vertices *vertices;
     Edges *edges;
+    EventsData eventsData;
 
     double width;
     double height;
@@ -31,9 +38,9 @@ private:
     double numOfPoints;
     double animationParameter;
 
-    EventsData eventsData;
-
     QGraphicsScene *scene;
+
+    QTimer timer;
 
     EventData   &FindEventData();
 
@@ -59,6 +66,8 @@ public:
 
     QGraphicsScene *Scene();
 
+    QTimer *Timer();
+
     void Clear();
 
     void Init();
@@ -74,6 +83,9 @@ public:
         double				endX,
         double				endY,
         bool				isBeachLine = false);
+
+public slots:
+    void animate();
 };
 
 #endif // MODEL_H

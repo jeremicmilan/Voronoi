@@ -44,3 +44,8 @@ void MainWindow::on_hsAnimationParameter_sliderMoved(int position)
 
     model->Display();
 }
+
+void MainWindow::on_btnStart_clicked()
+{
+    model->Timer()->start();
+}
