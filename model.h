@@ -12,7 +12,7 @@
 #include "voronoi.h"
 #include "vpoint.h"
 
-#define ANIMATION_SPEED		2.0
+#define ANIMATION_SPEED		1.0
 #define ANIMATION_FPS		60
 
 #define POINT_SIZE			5.0
@@ -21,11 +21,15 @@
 
 using namespace vor;
 
+class MainWindow;
+
 class Model : QObject
 {
     Q_OBJECT
 
 private:
+
+    MainWindow *window;
 
     Voronoi *voronoi;
     Vertices *vertices;
@@ -41,32 +45,51 @@ private:
     QGraphicsScene *scene;
 
     QTimer timer;
+    bool animationOngoing;
+    bool animationToOngoing;
+    double animateToY;
 
-    EventData   &FindEventData();
+    EventsData::iterator FindEventData(double y);
 
 public:
 
-    Model(int w, int h);
+    Model(MainWindow *window, int w, int h);
 
     double Width() const;
 
     double Height() const;
 
+    double MinHeight() const;
+
     double GetYFromAP(double ap);
+
+    double GetAPFromY(double y);
 
     double ModelToDisplayX(double x);
 
     double ModelToDisplayY(double y);
 
+    double DisplayToModelY(double y);
+
     void SetNumOfPoints(int n);
 
-    void SetAnimationParameter(double value);
+    void SetAnimationParameter(double ap, bool updateSlider = true);
 
     double AnimationParameter() const;
 
     QGraphicsScene *Scene();
 
     QTimer *Timer();
+
+    bool AnimationOngoing() const;
+
+    void SetAnimationOngoing(bool ao);
+
+    void SetAnimateTo(double at);
+
+    bool AnimationToOngoing() const;
+
+    void SetAnimationToOngoing(bool ato);
 
     void Clear();
 
@@ -84,8 +107,16 @@ public:
         double				endY,
         bool				isBeachLine = false);
 
+    void AnimateToPrevious();
+
+    void AnimateToNext();
+
+    void animateTo(double y);
+
 public slots:
     void animate();
+
+    void animateTo();
 };
 
 #endif // MODEL_H

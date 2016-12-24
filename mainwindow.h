@@ -20,6 +20,8 @@ public:
 
     Model *model;
 
+    Ui::MainWindow *ui;
+
     void InitModel();
 
 private slots:
@@ -29,9 +31,9 @@ private slots:
 
     void on_btnStart_clicked();
 
-private:
+    void on_btnPrevious_clicked();
 
-    Ui::MainWindow *ui;
+    void on_btnNext_clicked();
 };
 
 #endif // MAINWINDOW_H

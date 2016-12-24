@@ -1,9 +1,13 @@
 #include "model.h"
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
 
-Model::Model(int w, int h) :
+Model::Model(MainWindow *wind, int w, int h) :
+    window(wind),
     width(w),
     height(h),
-    numOfPoints(50)
+    numOfPoints(50),
+    animationOngoing(false)
 {
     voronoi = new Voronoi();
     vertices = new Vertices();
@@ -27,12 +31,23 @@ double Model::Height() const
     return height;
 }
 
+double Model::MinHeight() const
+{
+    return qMin(eventsData.back().ly, -height);
+}
+
 double Model::GetYFromAP(double ap)
 {
-    double maxHeight = qMax(ModelToDisplayY(eventsData.back().ly),
-            ModelToDisplayY(-height));
+    double maxHeight = ModelToDisplayY(MinHeight());
 
     return ModelToDisplayY(ap * maxHeight);
+}
+
+double Model::GetAPFromY(double y)
+{
+    double maxHeight = ModelToDisplayY(MinHeight());
+
+    return DisplayToModelY(y) / maxHeight;
 }
 
 double Model::ModelToDisplayX(double x)
@@ -45,14 +60,27 @@ double Model::ModelToDisplayY(double y)
     return height - y;
 }
 
+double Model::DisplayToModelY(double y)
+{
+    return height - y;
+}
+
 void Model::SetNumOfPoints(int n)
 {
     numOfPoints = n;
 }
 
-void Model::SetAnimationParameter(double value)
+void Model::SetAnimationParameter(double ap, bool updateSlider)
 {
-    animationParameter = value;
+    animationParameter = ap;
+
+    if (updateSlider)
+    {
+        int max = window->ui->hsAnimationParameter->maximum();
+        window->ui->hsAnimationParameter->setValue(GetAPFromY(ap) * max);
+
+        std::cout << ap << " -> " << GetAPFromY(ap) << std::endl;
+    }
 }
 
 double Model::AnimationParameter() const
@@ -68,6 +96,31 @@ QGraphicsScene *Model::Scene()
 QTimer *Model::Timer()
 {
     return &timer;
+}
+
+bool Model::AnimationOngoing() const
+{
+    return animationOngoing;
+}
+
+void Model::SetAnimationOngoing(bool ao)
+{
+    animationOngoing = ao;
+}
+
+void Model::SetAnimateTo(double at)
+{
+    animateToY = at;
+}
+
+bool Model::AnimationToOngoing() const
+{
+    return animationToOngoing;
+}
+
+void Model::SetAnimationToOngoing(bool ato)
+{
+    animationToOngoing = ato;
 }
 
 void Model::Clear()
@@ -153,27 +206,52 @@ void Model::DrawLine(double startX,
         QPen(isBeachLine ? Qt::red : Qt::black));
 }
 
-EventData &Model::FindEventData()
+void Model::AnimateToPrevious()
 {
-    if (true)
-    {
-        auto eventData = std::lower_bound(eventsData.begin(), eventsData.end(),
-                EventData(animationParameter),
-                [](const EventData &ed1, const EventData &ed2)
-        {
-            return !(ed1 < ed2);
-        }
-                );
+    EventsData::iterator it = FindEventData(animationParameter);
 
-        if (eventData == eventsData.end())
+    if (it == eventsData.begin())
+    {
+        return;
+    }
+
+    double y = (it - 1)->ly;
+
+    if (y == AnimationParameter())
+    {
+        if (it - 1 != eventsData.begin())
         {
-            return *(eventData - 1);
-        }
-        else
-        {
-            return *eventData;
+            animateTo((it - 2)->ly);
         }
     }
+    else
+    {
+        animateTo(y);
+    }
+}
+
+void Model::AnimateToNext()
+{
+    EventsData::iterator it = FindEventData(animationParameter);
+
+    if (it + 1 == eventsData.end())
+    {
+        animateTo(MinHeight());
+    }
+    else
+    {
+        animateTo(it->ly);
+    }
+}
+
+void Model::animateTo(double y)
+{
+    SetAnimateTo(y);
+    animateTo();
+
+    SetAnimationOngoing(false);
+    timer.stop();
+    SetAnimationToOngoing(true);
 }
 
 void Model::Display()
@@ -191,18 +269,20 @@ void Model::Display()
     {
         DrawLine(edge);
 
+#ifdef DEBUG
         if (edge->start->x < 0 || edge->start->x > width ||
             edge->start->y < 0 || edge->start->y > height)
         {
             if (edge->end->x < 0 || edge->end->x > width ||
                 edge->end->y < 0 || edge->end->y > height)
             {
-                //std::cout << "Invalid line" << std::endl;
+                std::cout << "Invalid line" << std::endl;
             }
         }
+#endif
     }
 
-    const EventData &eventData = FindEventData();
+    const EventData &eventData = *FindEventData(animationParameter);
 
     eventData.root->Display(this);
 
@@ -219,6 +299,56 @@ void Model::Display()
 
 void Model::animate()
 {
-    animationParameter -= ANIMATION_SPEED;
+    if (animationParameter < MinHeight())
+    {
+        timer.stop();
+        animationOngoing = false;
+        return;
+    }
+
+    SetAnimationParameter(animationParameter - ANIMATION_SPEED);
+
     Display();
+}
+
+void Model::animateTo()
+{
+    if (animateToY != animationParameter && !animationOngoing &&
+        animationToOngoing)
+    {
+        if (qAbs(animationParameter - animateToY) > ANIMATION_SPEED)
+        {
+            int dir = (animationParameter > animateToY ? -1 : 1);
+            SetAnimationParameter(animationParameter + dir * ANIMATION_SPEED);
+            QTimer::singleShot(1.0 / ANIMATION_FPS, this, SLOT(animateTo()));
+        }
+        else
+        {
+            animationParameter = animateToY;
+        }
+
+        Display();
+    }
+}
+
+EventsData::iterator Model::FindEventData(double y)
+{
+    if (true)
+    {
+        auto eventData = std::lower_bound(eventsData.begin(), eventsData.end(),
+                EventData(y), [](const EventData &ed1, const EventData &ed2)
+        {
+            return !(ed1 < ed2);
+        }
+                );
+
+        if (eventData == eventsData.end())
+        {
+            return eventData - 1;
+        }
+        else
+        {
+            return eventData;
+        }
+    }
 }
