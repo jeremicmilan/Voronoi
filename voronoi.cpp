@@ -44,6 +44,8 @@ Edges *Voronoi::GetEdges(Vertices *v, int w, int h, EventsData &eventsData)
 
     VEvent *e;
 
+    eventsData.push_back(EventData(height, root->DeepCopy()));
+
     while (!queue.empty())
     {
         e = queue.top();
@@ -56,7 +58,8 @@ Edges *Voronoi::GetEdges(Vertices *v, int w, int h, EventsData &eventsData)
         }
 
         if (e->pe ||
-            (!e->pe && e->circleCenter->y >= 0 && e->circleCenter->x <= width &&
+            (!e->pe && e->circleCenter->y >= -height &&
+            e->circleCenter->x <= width &&
             e->circleCenter->x >= 0))
         {
             eventsData.push_back(EventData(ly, root->DeepCopy()));
@@ -70,7 +73,13 @@ Edges *Voronoi::GetEdges(Vertices *v, int w, int h, EventsData &eventsData)
         {
             RemoveParabola(e);
         }
+
         delete(e);
+    }
+
+    if (ly > -height)
+    {
+        eventsData.push_back(EventData(ly + 0.0000000000001, root->DeepCopy()));
     }
 
     FinishEdge(root);

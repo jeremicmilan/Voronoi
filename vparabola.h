@@ -133,7 +133,8 @@ public:
      */
     static VPoint Intersect(const VParabola *	p1,
         const VParabola *						p2,
-        double									sweepingLine);
+        double									sweepingLine,
+        bool									firstIntersection);
 
 private:
 

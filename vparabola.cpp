@@ -91,14 +91,18 @@ void VParabola::Display(Model *model)
         double xFrom = 0;
         double xTo = model->Width();
 
-        if (left != nullptr)
+        if (nullptr != left)
         {
-            xFrom = Intersect(left, this, sweepingLine).x;
+            bool firstIntersection = left->site->y > site->y;
+
+            xFrom = Intersect(left, this, sweepingLine, firstIntersection).x;
         }
 
-        if (right != nullptr)
+        if (nullptr != right)
         {
-            xTo = Intersect(this, right, sweepingLine).x;
+            bool firstIntersection = site->y > right->site->y;
+
+            xTo = Intersect(this, right, sweepingLine, firstIntersection).x;
         }
 
         DrawFromTo(model, site, sweepingLine, xFrom, xTo);
@@ -148,18 +152,22 @@ void VParabola::DrawFromTo(Model *model, const VPoint *focus,
     {
         double currentY = ParabolaGetYFromX(focus, directrixHeight, x);
 
-        if (currentY <= model->Height() && currentY >= 0
-            || previousY <= model->Height() && previousY >= 0)
-        {
-            model->DrawLine(previousX, previousY, x, currentY,
-                true /* isBeachLine */);
-        }
+        model->DrawLine(previousX, previousY, x, currentY,
+            true /* isBeachLine */);
 
         previousY = currentY;
         previousX = x;
     }
 
-    std::cout << "draw from " << xFrom << " to " << xTo << std::endl;
+    if (xFrom < xTo)
+    {
+        model->DrawLine(previousX, previousY, xTo,
+            ParabolaGetYFromX(focus, directrixHeight, xTo),
+            true /* isBeachLine */);
+    }
+
+    std::cout << "focus: " << focus->x << " - draw from " << xFrom << " to " <<
+        xTo << std::endl;
 }
 
 /*
@@ -258,7 +266,8 @@ VParabola *VParabola::GetRightChild(VParabola *p)
 
 VPoint VParabola::Intersect(const VParabola *	p1,
     const VParabola *							p2,
-    double										sweepingLine)
+    double										sweepingLine,
+    bool										firstIntersection)
 {
     double a1 = p1->site->x;
     double b1 = p1->site->y;
@@ -280,18 +289,14 @@ VPoint VParabola::Intersect(const VParabola *	p1,
 
     double discriminant = B * B - 4 * A * C;
 
-    if (qAbs(discriminant) < 0.000000000001)
-    {
-        double x = -B / (2 * A);
-        double y = ParabolaGetYFromX(p1->site, sweepingLine, x);
-        return VPoint(x, y);
-    }
-
     if (discriminant > 0)
     {
-        // TODO: Handle two solutions
-        double x = (-B - sqrt(discriminant)) / (2 * A);
+        double x1 = (-B - sqrt(discriminant)) / (2 * A);
+        double x2 = (-B + sqrt(discriminant)) / (2 * A);
+
+        double x = firstIntersection ? qMin(x1, x2) : qMax(x1, x2);
         double y = ParabolaGetYFromX(p1->site, sweepingLine, x);
+
         return VPoint(x, y);
     }
 
