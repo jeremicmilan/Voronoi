@@ -88,7 +88,8 @@ static INLINE void quat_to_mat(mat4_t res, quat_t q)
 }
 
 /* matrix functions */
-static INLINE void m4_cons(mat4_t m,
+static INLINE void m4_cons(
+    mat4_t m,
     float m11, float m12, float m13, float m14,
     float m21, float m22, float m23, float m24,
     float m31, float m32, float m33, float m34,

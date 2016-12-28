@@ -116,8 +116,10 @@ void VParabola::Display(Model *model)
     }
 }
 
-void VParabola::Draw(Model *model, const VPoint *focus,
-    double directrixHeight) const
+void VParabola::Draw(
+    Model *			model,
+    const VPoint *	focus,
+    double			directrixHeight) const
 {
     double previousY = ParabolaGetYFromX(focus, directrixHeight, 0);
     double previousX = 0;
@@ -138,8 +140,12 @@ void VParabola::Draw(Model *model, const VPoint *focus,
     }
 }
 
-void VParabola::DrawFromTo(Model *model, const VPoint *focus,
-    double directrixHeight, double xFrom, double xTo) const
+void VParabola::DrawFromTo(
+    Model *			model,
+    const VPoint *	focus,
+    double			directrixHeight,
+    double			xFrom,
+    double			xTo) const
 {
     xFrom = qMax(xFrom, 0.0);
     xTo = qMin(xTo, model->Width());
@@ -266,10 +272,11 @@ VParabola *VParabola::GetRightChild(VParabola *p)
     return par;
 }
 
-VPoint VParabola::Intersect(const VParabola *	p1,
-    const VParabola *							p2,
-    double										sweepingLine,
-    bool										firstIntersection)
+VPoint VParabola::Intersect(
+    const VParabola *	p1,
+    const VParabola *	p2,
+    double				sweepingLine,
+    bool				firstIntersection)
 {
     double a1 = p1->site->x;
     double b1 = p1->site->y;

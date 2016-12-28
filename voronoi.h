@@ -81,8 +81,8 @@ private:
      *  InsertParabola : processing the place event
      *  RemoveParabola : processing the circle event
      *  FinishEdge     : recursively finishes all infinite edges in the tree
-     *  GetXOfEdge     : returns the current x position of an intersection point of
-     *                   left and right parabolas
+     *  GetXOfEdge     : returns the current x position of an intersection point
+     *                   of left and right parabolas
      *  GetParabolaByX : returns the Parabola that is under this "x" position in
      *                   the current beachline
      *  CheckCircle    : checks the circle event (disappearing) of this parabola
@@ -95,18 +95,15 @@ private:
 
     void FinishEdge(VParabola *n);
 
-    double GetXOfEdge(VParabola *	par,
-        double						y);
+    double GetXOfEdge(VParabola *par, double y);
 
     VParabola *GetParabolaByX(double xx);
 
-    double GetY(VPoint *p,
-        double			x);
+    double GetY(VPoint *p, double x);
 
     void CheckCircle(VParabola *b);
 
-    VPoint *GetEdgeIntersection(VEdge * a,
-        VEdge *							b);
+    VPoint *GetEdgeIntersection(VEdge *a, VEdge *b);
 };
 }
 

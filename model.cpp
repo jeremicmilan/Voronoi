@@ -194,11 +194,12 @@ void Model::DrawLine(const VEdge *edge)
     DrawLine(edge->start->x, edge->start->y, edge->end->x, edge->end->y);
 }
 
-void Model::DrawLine(double startX,
-    double					startY,
-    double					endX,
-    double					endY,
-    bool					isBeachLine)
+void Model::DrawLine(
+    double	startX,
+    double	startY,
+    double	endX,
+    double	endY,
+    bool	isBeachLine)
 {
     startX = ModelToDisplayX(startX);
     startY = ModelToDisplayY(startY);

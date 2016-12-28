@@ -104,11 +104,12 @@ public:
 
     void DrawLine(const VEdge *edge);
 
-    void DrawLine(double	startX,
-        double				startY,
-        double				endX,
-        double				endY,
-        bool				isBeachLine = false);
+    void DrawLine(
+        double	startX,
+        double	startY,
+        double	endX,
+        double	endY,
+        bool	isBeachLine = false);
 
     void AnimateToPrevious();
 

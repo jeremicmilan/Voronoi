@@ -64,23 +64,26 @@ public:
 
     void Draw(Model *model, const VPoint *focus, double directrixHeight) const;
 
-    void DrawFromTo(Model * model,
-        const VPoint *		focus,
-        double				directrixHeight,
-        double				xFrom,
-        double				xTo) const;
+    void DrawFromTo(
+        Model *			model,
+        const VPoint *	focus,
+        double			directrixHeight,
+        double			xFrom,
+        double			xTo) const;
 
     /*
      *   Access to the children (in tree).
      */
     void SetLeft(VParabola *p)
     {
-        _left = p; p->parent = this;
+        _left = p;
+        p->parent = this;
     }
 
     void SetRight(VParabola *p)
     {
-        _right = p; p->parent = this;
+        _right = p;
+        p->parent = this;
     }
 
     VParabola *Left()
@@ -131,10 +134,11 @@ public:
     /*
      *  Function for intersecting two parabolae
      */
-    static VPoint Intersect(const VParabola *	p1,
-        const VParabola *						p2,
-        double									sweepingLine,
-        bool									firstIntersection);
+    static VPoint Intersect(
+        const VParabola *	p1,
+        const VParabola *	p2,
+        double				sweepingLine,
+        bool				firstIntersection);
 
 private:
 
