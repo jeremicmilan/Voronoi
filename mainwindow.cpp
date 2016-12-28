@@ -27,7 +27,7 @@ void MainWindow::InitModel()
     model->SetNumOfPoints(ui->sbNumOfPoints->value());
 
     model->Init();
-    model->Display();
+    model->Display(true);
 }
 
 void MainWindow::on_btnGenerate_clicked()

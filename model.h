@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <time.h>
 #include <QGraphicsScene>
+#include <QGraphicsRectItem>
+#include <QGraphicsLineItem>
 #include <QTimer>
 #include <vector>
 
@@ -43,6 +45,7 @@ private:
     double animationParameter;
 
     QGraphicsScene *scene;
+    std::vector <QGraphicsItem *> toDeleteFromScene;
 
     QTimer timer;
     bool animationOngoing;
@@ -95,7 +98,7 @@ public:
 
     void Init();
 
-    void Display();
+    void Display(bool clearAll = false);
 
     void DrawPoint(VPoint *point, bool isSpecial);
 

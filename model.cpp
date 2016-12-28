@@ -78,8 +78,6 @@ void Model::SetAnimationParameter(double ap, bool updateSlider)
     {
         int max = window->ui->hsAnimationParameter->maximum();
         window->ui->hsAnimationParameter->setValue(GetAPFromY(ap) * max);
-
-        std::cout << ap << " -> " << GetAPFromY(ap) << std::endl;
     }
 }
 
@@ -178,12 +176,17 @@ void Model::DrawPoint(VPoint *point, bool isSpecial)
         brush.setStyle(Qt::BrushStyle::SolidPattern);
     }
 
-    scene->addRect(x - POINT_SIZE / 2,
-        y - POINT_SIZE / 2,
-        POINT_SIZE,
-        POINT_SIZE,
-        QPen(),
-        brush);
+    QGraphicsRectItem *item = scene->addRect(x - POINT_SIZE / 2,
+            y - POINT_SIZE / 2,
+            POINT_SIZE,
+            POINT_SIZE,
+            QPen(),
+            brush);
+
+    if (isSpecial)
+    {
+        toDeleteFromScene.push_back(item);
+    }
 }
 
 void Model::DrawLine(const VEdge *edge)
@@ -202,8 +205,13 @@ void Model::DrawLine(double startX,
     endX = ModelToDisplayX(endX);
     endY = ModelToDisplayY(endY);
 
-    scene->addLine(startX, startY, endX, endY,
-        QPen(isBeachLine ? Qt::red : Qt::black));
+    QGraphicsLineItem *item = scene->addLine(startX, startY, endX, endY,
+            QPen(isBeachLine ? Qt::red : Qt::black));
+
+    if (isBeachLine)
+    {
+        toDeleteFromScene.push_back(item);
+    }
 }
 
 void Model::AnimateToPrevious()
@@ -254,32 +262,45 @@ void Model::animateTo(double y)
     SetAnimationToOngoing(true);
 }
 
-void Model::Display()
+void Model::Display(bool clearAll)
 {
-    scene->clear();
-
-    // Draw points
-    for (VPoint *point : *vertices)
+    if (clearAll)
     {
-        DrawPoint(point, false /* isSpecial */);
-    }
+        scene->clear();
+        toDeleteFromScene.clear();
 
-    // Draw Edges
-    for (VEdge *edge: *edges)
-    {
-        DrawLine(edge);
+        // Draw points
+        for (VPoint *point : *vertices)
+        {
+            DrawPoint(point, false /* isSpecial */);
+        }
+
+        // Draw Edges
+        for (VEdge *edge: *edges)
+        {
+            DrawLine(edge);
 
 #ifdef DEBUG
-        if (edge->start->x < 0 || edge->start->x > width ||
-            edge->start->y < 0 || edge->start->y > height)
-        {
-            if (edge->end->x < 0 || edge->end->x > width ||
-                edge->end->y < 0 || edge->end->y > height)
+            if (edge->start->x < 0 || edge->start->x > width ||
+                edge->start->y < 0 || edge->start->y > height)
             {
-                std::cout << "Invalid line" << std::endl;
+                if (edge->end->x < 0 || edge->end->x > width ||
+                    edge->end->y < 0 || edge->end->y > height)
+                {
+                    std::cout << "Invalid line" << std::endl;
+                }
             }
-        }
 #endif
+        }
+    }
+    else
+    {
+        for (QGraphicsItem *item : toDeleteFromScene)
+        {
+            scene->removeItem(item);
+        }
+
+        toDeleteFromScene.clear();
     }
 
     const EventData &eventData = *FindEventData(animationParameter);
@@ -289,8 +310,11 @@ void Model::Display()
     double sweepingLineY = ModelToDisplayY(animationParameter);
 
     // Draw sweeping line
-    scene->addLine(ModelToDisplayX(0), sweepingLineY, ModelToDisplayX(
-            width), sweepingLineY);
+    QGraphicsLineItem *line = scene->addLine(ModelToDisplayX(
+                0), sweepingLineY, ModelToDisplayX(
+                width), sweepingLineY, QPen(Qt::green));
+
+    toDeleteFromScene.push_back(line);
 
 #ifdef DEBUG
     std::cout << "Sweeping line: " << FindEventData().ly << std::endl;
