@@ -107,7 +107,7 @@ void VParabola::Display(Model *model)
 
         DrawFromTo(model, site, sweepingLine, xFrom, xTo);
 
-        model->DrawPoint(site, true /* isSpecial */);
+        model->DrawPoint(site, true /* isMarked */);
     }
     else
     {

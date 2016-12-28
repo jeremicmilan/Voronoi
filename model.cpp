@@ -163,16 +163,23 @@ void Model::Init()
 #endif
 }
 
-void Model::DrawPoint(VPoint *point, bool isSpecial)
+void Model::DrawPoint(VPoint *point, bool isMarked, bool isEvent)
 {
     double x = ModelToDisplayX(point->x);
     double y = ModelToDisplayY(point->y);
 
-    QBrush brush(Qt::black);
+    QBrush brush(COLOR_DIAGRAM);
 
-    if (isSpecial)
+    if (isMarked)
     {
-        brush.setColor(Qt::yellow);
+        if (isEvent)
+        {
+            brush.setColor(COLOR_EVENT);
+        }
+        else
+        {
+            brush.setColor(COLOR_BEACH_LINE);
+        }
         brush.setStyle(Qt::BrushStyle::SolidPattern);
     }
 
@@ -183,7 +190,7 @@ void Model::DrawPoint(VPoint *point, bool isSpecial)
             QPen(),
             brush);
 
-    if (isSpecial)
+    if (isMarked)
     {
         toDeleteFromScene.push_back(item);
     }
@@ -207,7 +214,7 @@ void Model::DrawLine(
     endY = ModelToDisplayY(endY);
 
     QGraphicsLineItem *item = scene->addLine(startX, startY, endX, endY,
-            QPen(isBeachLine ? Qt::red : Qt::black));
+            QPen(isBeachLine ? COLOR_BEACH_LINE : COLOR_DIAGRAM));
 
     if (isBeachLine)
     {
@@ -241,7 +248,12 @@ void Model::AnimateToPrevious()
 
 void Model::AnimateToNext()
 {
-    EventsData::iterator it = FindEventData(animationParameter);
+    EventsData::iterator it = FindEventData(animationParameter) + 1;
+
+    if (it == eventsData.end())
+    {
+        return;
+    }
 
     if (it + 1 == eventsData.end())
     {
@@ -273,7 +285,7 @@ void Model::Display(bool clearAll)
         // Draw points
         for (VPoint *point : *vertices)
         {
-            DrawPoint(point, false /* isSpecial */);
+            DrawPoint(point);
         }
 
         // Draw Edges
@@ -304,22 +316,43 @@ void Model::Display(bool clearAll)
         toDeleteFromScene.clear();
     }
 
-    const EventData &eventData = *FindEventData(animationParameter);
+    EventData &eventData = *FindEventData(animationParameter);
 
+    // Draw beach line
     eventData.root->Display(this);
 
-    double sweepingLineY = ModelToDisplayY(animationParameter);
-
     // Draw sweeping line
-    QGraphicsLineItem *line = scene->addLine(ModelToDisplayX(
-                0), sweepingLineY, ModelToDisplayX(
-                width), sweepingLineY, QPen(Qt::green));
-
+    double sweepingLineY = ModelToDisplayY(animationParameter);
+    QGraphicsLineItem *line = scene->addLine(
+        ModelToDisplayX(0), sweepingLineY,
+        ModelToDisplayX(width), sweepingLineY,
+        QPen(COLOR_EVENT));
     toDeleteFromScene.push_back(line);
 
 #ifdef DEBUG
-    std::cout << "Sweeping line: " << FindEventData().ly << std::endl;
+    std::cout << "Sweeping line: " << sweepingLineY << std::endl;
 #endif
+
+    // Draw Event
+    if (eventData.isPointEvent)
+    {}
+    else
+    {
+        if (ModelToDisplayY(eventData.ly) == sweepingLineY)
+        {
+            double x = ModelToDisplayX(eventData.circleCenter.x);
+            double y = ModelToDisplayY(eventData.circleCenter.y);
+            double r = y - sweepingLineY;
+
+            QGraphicsEllipseItem *ellipse = scene->addEllipse(
+                x - r, y - r,
+                2 * r, 2 * r,
+                QPen(COLOR_EVENT));
+            toDeleteFromScene.push_back(ellipse);
+
+            DrawPoint(&eventData.circleCenter, true, true);
+        }
+    }
 }
 
 void Model::animate()
@@ -363,7 +396,7 @@ EventsData::iterator Model::FindEventData(double y)
         auto eventData = std::lower_bound(eventsData.begin(), eventsData.end(),
                 EventData(y), [](const EventData &ed1, const EventData &ed2)
         {
-            return !(ed1 < ed2);
+            return !(ed1 <= ed2);
         }
                 );
 

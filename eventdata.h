@@ -9,17 +9,32 @@
  */
 struct EventData
 {
-    EventData(const double y, VParabola *r = nullptr) :
+    EventData(
+        double		y,
+        VParabola * r = nullptr,
+        bool		pe = true,
+        VPoint *	cc = nullptr)
+        :
         ly(y),
-        root(r)
-    {}
+        root(r),
+        isPointEvent(pe),
+        circleCenter(VPoint(-1, -1))
+    {
+        if (nullptr != cc)
+        {
+            circleCenter = *cc;
+        }
+    }
 
     double		ly;
     VParabola * root; // We are owning this
 
-    bool operator <(const EventData &other) const
+    bool		isPointEvent;
+    VPoint		circleCenter;
+
+    bool operator <=(const EventData &other) const
     {
-        return ly < other.ly;
+        return ly <= other.ly;
     }
 };
 
