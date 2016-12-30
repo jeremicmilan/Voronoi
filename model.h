@@ -19,11 +19,11 @@
 #define ANIMATION_FPS		60
 
 #define POINT_SIZE			5.0
-#define PARABOLA_DRAW_STEP	1.0
+#define PARABOLA_DRAW_STEP	3.0
 #define PARABOLA_PRECISION	5.0
 
 #define COLOR_DIAGRAM		Qt::black
-#define COLOR_BEACH_LINE	Qt::red
+#define COLOR_BEACH_LINE	Qt::green
 #define COLOR_EVENT			Qt::blue
 
 using namespace vor;

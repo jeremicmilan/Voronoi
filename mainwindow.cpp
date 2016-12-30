@@ -3,10 +3,10 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
+    ui(new Ui::MainWindow),
+    model(nullptr)
 {
     ui->setupUi(this);
-    model = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -17,12 +17,15 @@ MainWindow::~MainWindow()
 
 void MainWindow::InitModel()
 {
-    if (model == nullptr)
+    if (nullptr != model)
     {
-        QSize size = ui->graphicsView->size();
-        model = new Model(this, size.width(), size.height());
-        ui->graphicsView->setScene(model->Scene());
+        delete model;
     }
+
+    QRect rect = ui->graphicsView->rect();
+    model = new Model(this, rect.width(), rect.height());
+    model->Scene()->setSceneRect(rect);
+    ui->graphicsView->setScene(model->Scene());
 
     model->SetNumOfPoints(ui->sbNumOfPoints->value());
 
