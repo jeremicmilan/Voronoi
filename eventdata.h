@@ -13,13 +13,19 @@ struct EventData
         double		y,
         VParabola * r = nullptr,
         bool		pe = true,
+        VPoint *	pi = nullptr,
         VPoint *	cc = nullptr)
         :
         ly(y),
         root(r),
         isPointEvent(pe),
+        pointInserted(VPoint(-1, -1)),
         circleCenter(VPoint(-1, -1))
     {
+        if (nullptr != pi)
+        {
+            pointInserted = *pi;
+        }
         if (nullptr != cc)
         {
             circleCenter = *cc;
@@ -30,7 +36,8 @@ struct EventData
     VParabola * root; // We are owning this
 
     bool		isPointEvent;
-    VPoint		circleCenter;
+    VPoint		pointInserted; // if isPointEvent
+    VPoint		circleCenter; // if !isPointEvent
 
     bool operator <=(const EventData &other) const
     {

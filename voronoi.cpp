@@ -63,7 +63,7 @@ Edges *Voronoi::GetEdges(Vertices *v, int w, int h, EventsData &eventsData)
             e->circleCenter->x >= 0))
         {
             eventsData.push_back(
-                EventData(ly, root->DeepCopy(), e->pe, e->circleCenter));
+                EventData(ly, root->DeepCopy(), e->pe, e->point, e->circleCenter));
         }
 
         if (e->pe)

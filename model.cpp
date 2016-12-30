@@ -335,7 +335,21 @@ void Model::Display(bool clearAll)
 
     // Draw Event
     if (eventData.isPointEvent)
-    {}
+    {
+        if (ModelToDisplayY(eventData.ly) == sweepingLineY)
+        {
+            double x = ModelToDisplayX(eventData.pointInserted.x);
+            double y = ModelToDisplayY(eventData.pointInserted.y);
+
+            QGraphicsLineItem *line = scene->addLine(
+                x, y,
+                x, 0,
+                QPen(COLOR_EVENT));
+            toDeleteFromScene.push_back(line);
+
+            DrawPoint(&eventData.pointInserted, true, true);
+        }
+    }
     else
     {
         if (ModelToDisplayY(eventData.ly) == sweepingLineY)
