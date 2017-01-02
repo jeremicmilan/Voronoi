@@ -6,7 +6,7 @@ Model::Model(MainWindow *wind, int w, int h) :
     window(wind),
     width(w),
     height(h),
-    numOfPoints(50),
+    numOfPoints(0),
     animationOngoing(false)
 {
     voronoi = new Voronoi();
@@ -16,7 +16,7 @@ Model::Model(MainWindow *wind, int w, int h) :
     animationParameter = ModelToDisplayY(0);
 
     timer.setInterval(1.0 / ANIMATION_FPS);
-    connect(&timer, SIGNAL(timeout()), this, SLOT(animate()));
+    connect(&timer, SIGNAL(timeout()), this, SLOT(Animate()));
 
     srand((unsigned)time(NULL));
 }
@@ -26,14 +26,36 @@ double Model::Width() const
     return width;
 }
 
+void Model::SetWidth(double w)
+{
+    width = w;
+}
+
 double Model::Height() const
 {
     return height;
 }
 
+void Model::SetHeight(double h)
+{
+    height = h;
+}
+
+int Model::NumOfPoints() const
+{
+    return numOfPoints;
+}
+
 double Model::MinHeight() const
 {
-    return qMin(eventsData.back().ly, -height);
+    if (eventsData.size() > 0)
+    {
+        return qMin(eventsData.back().ly, -height);
+    }
+    else
+    {
+        return -height;
+    }
 }
 
 double Model::GetYFromAP(double ap)
@@ -63,11 +85,6 @@ double Model::ModelToDisplayY(double y)
 double Model::DisplayToModelY(double y)
 {
     return height - y;
-}
-
-void Model::SetNumOfPoints(int n)
-{
-    numOfPoints = n;
 }
 
 void Model::SetAnimationParameter(double ap, bool updateSlider)
@@ -121,38 +138,41 @@ void Model::SetAnimationToOngoing(bool ato)
     animationToOngoing = ato;
 }
 
-void Model::Clear()
+void Model::Clear(bool clearAll)
 {
-    for (VPoint *point : *vertices)
+    if (clearAll)
     {
-        delete point;
+        for (VPoint *point : *vertices)
+        {
+            delete point;
+        }
+    
+        vertices->clear();
+        numOfPoints = 0;
+
+        scene->clear();
+        toDeleteFromScene.clear();
     }
-
-    vertices->clear();
-
-    eventsData.clear();
-}
-
-void Model::Init()
-{
-    vertices->clear();
 
     for (EventData ed : eventsData)
     {
         ed.root->DeepDelete();
     }
-
     eventsData.clear();
+}
 
-    for (int i = 0; i < numOfPoints; i++)
+void Model::Init()
+{
+    if (numOfPoints <= 0)
     {
-        vertices->push_back(new VPoint(width * (double)rand() /
-            (double)RAND_MAX,
-            height * (double)rand() / (double)RAND_MAX));
+        return;
     }
+
+    Clear();
 
     edges = voronoi->GetEdges(vertices, (int)width, (int)height, eventsData);
     std::cout << "Voronoi diagram done!" << std::endl;
+    std::cout << "Number of points: " << numOfPoints << std::endl;
 
 #ifdef DEBUG
     for (EventData ed : eventsData)
@@ -237,12 +257,12 @@ void Model::AnimateToPrevious()
     {
         if (it - 1 != eventsData.begin())
         {
-            animateTo((it - 2)->ly);
+            AnimateTo((it - 2)->ly);
         }
     }
     else
     {
-        animateTo(y);
+        AnimateTo(y);
     }
 }
 
@@ -257,26 +277,47 @@ void Model::AnimateToNext()
 
     if (it + 1 == eventsData.end())
     {
-        animateTo(MinHeight());
+        AnimateTo(MinHeight());
     }
     else
     {
-        animateTo(it->ly);
+        AnimateTo(it->ly);
     }
 }
 
-void Model::animateTo(double y)
+void Model::AnimateTo(double y)
 {
     SetAnimateTo(y);
-    animateTo();
+    AnimateTo();
 
     SetAnimationOngoing(false);
     timer.stop();
     SetAnimationToOngoing(true);
 }
 
+void Model::AddPoint(double x, double y)
+{
+    if (numOfPoints < MAX_NUM_OF_POINTS)
+    {
+        vertices->push_front(new VPoint(x, y));
+        numOfPoints++;
+    }
+    else
+    {
+        std::cerr << "Max number ("
+                  << MAX_NUM_OF_POINTS
+                  << ") of points exceeded!"
+                  << std::endl;
+    }
+}
+
 void Model::Display(bool clearAll)
 {
+    if (numOfPoints <= 0)
+    {
+        return;
+    }
+    
     if (clearAll)
     {
         scene->clear();
@@ -311,6 +352,7 @@ void Model::Display(bool clearAll)
         for (QGraphicsItem *item : toDeleteFromScene)
         {
             scene->removeItem(item);
+            delete item;
         }
 
         toDeleteFromScene.clear();
@@ -369,7 +411,7 @@ void Model::Display(bool clearAll)
     }
 }
 
-void Model::animate()
+void Model::Animate()
 {
     if (animationParameter < MinHeight())
     {
@@ -383,7 +425,7 @@ void Model::animate()
     Display();
 }
 
-void Model::animateTo()
+void Model::AnimateTo()
 {
     if (animateToY != animationParameter && !animationOngoing &&
         animationToOngoing)
@@ -392,7 +434,7 @@ void Model::animateTo()
         {
             int dir = (animationParameter > animateToY ? -1 : 1);
             SetAnimationParameter(animationParameter + dir * ANIMATION_SPEED);
-            QTimer::singleShot(1.0 / ANIMATION_FPS, this, SLOT(animateTo()));
+            QTimer::singleShot(1.0 / ANIMATION_FPS, this, SLOT(AnimateTo()));
         }
         else
         {
@@ -405,7 +447,7 @@ void Model::animateTo()
 
 EventsData::iterator Model::FindEventData(double y)
 {
-    if (true)
+    if (eventsData.size() > 0)
     {
         auto eventData = std::lower_bound(eventsData.begin(), eventsData.end(),
                 EventData(y), [](const EventData &ed1, const EventData &ed2)
@@ -423,4 +465,6 @@ EventsData::iterator Model::FindEventData(double y)
             return eventData;
         }
     }
+    
+    return eventsData.end();
 }

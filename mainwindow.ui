@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>857</width>
-    <height>554</height>
+    <width>900</width>
+    <height>506</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>900</width>
+    <height>300</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
@@ -41,6 +47,27 @@
     <item>
      <layout class="QHBoxLayout" name="navBar">
       <item>
+       <widget class="QPushButton" name="btnLoadFile">
+        <property name="text">
+         <string>Load file</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Count:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QSpinBox" name="sbNumOfPoints">
         <property name="minimum">
          <number>3</number>
@@ -61,6 +88,40 @@
        </widget>
       </item>
       <item>
+       <widget class="Line" name="line_2">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblX">
+        <property name="text">
+         <string>X:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="dsbX"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="lblY">
+        <property name="text">
+         <string>Y:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QDoubleSpinBox" name="dsbY"/>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnAddPoint">
+        <property name="text">
+         <string>Add point</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -74,6 +135,20 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="btnClear">
+        <property name="text">
+         <string>Clear</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="btnStart">
         <property name="text">
          <string>Start</string>
@@ -81,17 +156,11 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer_2">
+       <widget class="Line" name="line">
         <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="btnPrevious">

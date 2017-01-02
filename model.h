@@ -15,6 +15,8 @@
 #include "voronoi.h"
 #include "vpoint.h"
 
+#define MAX_NUM_OF_POINTS	100
+
 #define ANIMATION_SPEED		1.0
 #define ANIMATION_FPS		60
 
@@ -46,7 +48,7 @@ private:
     double width;
     double height;
 
-    double numOfPoints;
+    int numOfPoints;
     double animationParameter;
 
     QGraphicsScene *scene;
@@ -65,7 +67,13 @@ public:
 
     double Width() const;
 
+    void SetWidth(double w);
+
     double Height() const;
+
+    void SetHeight(double h);
+
+    int NumOfPoints() const;
 
     double MinHeight() const;
 
@@ -99,7 +107,7 @@ public:
 
     void SetAnimationToOngoing(bool ato);
 
-    void Clear();
+    void Clear(bool clearAll = false);
 
     void Init();
 
@@ -120,12 +128,14 @@ public:
 
     void AnimateToNext();
 
-    void animateTo(double y);
+    void AnimateTo(double y);
+    
+    void AddPoint(double x, double y);
 
 public slots:
-    void animate();
+    void Animate();
 
-    void animateTo();
+    void AnimateTo();
 };
 
 #endif // MODEL_H
