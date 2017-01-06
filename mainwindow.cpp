@@ -54,12 +54,16 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 void MainWindow::on_btnGenerate_clicked()
 {
+    model->SetAnimationParameter(model->ModelToDisplayY(0));
+    model->SetAnimationOngoing(false);
+    model->SetAnimationToOngoing(false);
+
     model->Clear(true);
-    
+
     for (int i = 0; i < ui->sbNumOfPoints->value(); i++)
     {
         model->AddPoint(model->Width() * (double)rand() / (double)RAND_MAX,
-                        model->Height() * (double)rand() / (double)RAND_MAX);
+            model->Height() * (double)rand() / (double)RAND_MAX);
     }
 
     model->Init();
@@ -79,19 +83,13 @@ void MainWindow::on_hsAnimationParameter_sliderMoved(int position)
 
 void MainWindow::on_btnStart_clicked()
 {
-    model->SetAnimationToOngoing(false);
-
     if (model->AnimationOngoing())
     {
-        model->Timer()->stop();
         model->SetAnimationOngoing(false);
-        ui->btnStart->setText("Start");
     }
     else
     {
-        model->Timer()->start();
         model->SetAnimationOngoing(true);
-        ui->btnStart->setText("Stop");
     }
 }
 
@@ -120,7 +118,7 @@ void MainWindow::on_btnClear_clicked()
 void MainWindow::on_btnLoadFile_clicked()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open Image"), ".", tr("Image Files (*.txt)"));
+            tr("Open Image"), ".", tr("Image Files (*.txt)"));
 
     std::ifstream in(fileName.toStdString(), std::ifstream::in);
 

@@ -121,11 +121,28 @@ bool Model::AnimationOngoing() const
 void Model::SetAnimationOngoing(bool ao)
 {
     animationOngoing = ao;
+
+    if (ao)
+    {
+        SetAnimationToOngoing(false);
+        timer.start();
+        window->ui->btnStart->setText("Stop");
+    }
+    else
+    {
+        timer.stop();
+        window->ui->btnStart->setText("Start");
+    }
 }
 
 void Model::SetAnimateTo(double at)
 {
     animateToY = at;
+
+    if (at)
+    {
+        SetAnimationOngoing(false);
+    }
 }
 
 bool Model::AnimationToOngoing() const
@@ -146,7 +163,7 @@ void Model::Clear(bool clearAll)
         {
             delete point;
         }
-    
+
         vertices->clear();
         numOfPoints = 0;
 
@@ -158,6 +175,7 @@ void Model::Clear(bool clearAll)
     {
         ed.root->DeepDelete();
     }
+
     eventsData.clear();
 }
 
@@ -287,12 +305,10 @@ void Model::AnimateToNext()
 
 void Model::AnimateTo(double y)
 {
+    SetAnimationToOngoing(true);
+
     SetAnimateTo(y);
     AnimateTo();
-
-    SetAnimationOngoing(false);
-    timer.stop();
-    SetAnimationToOngoing(true);
 }
 
 void Model::AddPoint(double x, double y)
@@ -304,10 +320,10 @@ void Model::AddPoint(double x, double y)
     }
     else
     {
-        std::cerr << "Max number ("
-                  << MAX_NUM_OF_POINTS
-                  << ") of points exceeded!"
-                  << std::endl;
+        std::cerr	<< "Max number ("
+                    << MAX_NUM_OF_POINTS
+                    << ") of points exceeded!"
+                    << std::endl;
     }
 }
 
@@ -317,7 +333,7 @@ void Model::Display(bool clearAll)
     {
         return;
     }
-    
+
     if (clearAll)
     {
         scene->clear();
@@ -465,6 +481,6 @@ EventsData::iterator Model::FindEventData(double y)
             return eventData;
         }
     }
-    
+
     return eventsData.end();
 }
