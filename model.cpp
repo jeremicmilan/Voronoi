@@ -394,7 +394,7 @@ void Model::Display(bool clearAll)
     // Draw Event
     if (eventData.isPointEvent)
     {
-        if (ModelToDisplayY(eventData.ly) == sweepingLineY)
+        if (qAbs(ModelToDisplayY(eventData.ly) - sweepingLineY) <= 1)
         {
             double x = ModelToDisplayX(eventData.pointInserted.x);
             double y = ModelToDisplayY(eventData.pointInserted.y);
@@ -410,7 +410,7 @@ void Model::Display(bool clearAll)
     }
     else
     {
-        if (ModelToDisplayY(eventData.ly) == sweepingLineY)
+        if (qAbs(ModelToDisplayY(eventData.ly) - sweepingLineY) <= 1)
         {
             double x = ModelToDisplayX(eventData.circleCenter.x);
             double y = ModelToDisplayY(eventData.circleCenter.y);

@@ -129,7 +129,7 @@ public:
     void AnimateToNext();
 
     void AnimateTo(double y);
-    
+
     void AddPoint(double x, double y);
 
 public slots:
