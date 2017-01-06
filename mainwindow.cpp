@@ -49,6 +49,8 @@ void MainWindow::resizeEvent(QResizeEvent *event)
         model->Scene()->setSceneRect(rect);
         model->SetWidth(rect.width());
         model->SetHeight(rect.height());
+
+        model->Display(true);
     }
 }
 
